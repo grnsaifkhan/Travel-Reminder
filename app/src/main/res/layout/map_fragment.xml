@@ -6,15 +6,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark">
-
-    <Button
-        android:id="@+id/search_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/custom_button_main_selector"
-        android:text="Search"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="16dp" />
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+        <EditText
+            android:id="@+id/destination"
+            android:hint="Starting Point"
+            android:textColorHint="@color/colorPrimary"
+            android:textColor="@color/writingYellow"
+            android:backgroundTint="@color/writingYellow"
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints" />
+        <EditText
+            android:id="@+id/start_point"
+            android:hint="Destination"
+            android:textColorHint="@color/colorPrimary"
+            android:textColor="@color/writingYellow"
+            android:backgroundTint="@color/writingYellow"
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <Button
+            android:id="@+id/add_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button_main_selector"
+            android:text="Add"
+            android:layout_marginBottom="5dp"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button_main_selector"
+            android:text="Search"
+            tools:layout_editor_absoluteX="16dp" />
+    </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
