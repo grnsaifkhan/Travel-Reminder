@@ -1,0 +1,53 @@
+[33mcommit 016744452f130d190093def1fc633102e0f78766[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Wed Dec 30 21:15:50 2020 +0100
+
+    Google map fragment is updated. Other fragments also updated
+
+[33mcommit 3671075bb0e87776a7c16eac1332e0caaf67cf00[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Mon Nov 2 01:39:34 2020 +0100
+
+    updating xml file data
+
+[33mcommit fa17f4b390428e47e0d21905c871a9e5036dd734[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Mon Nov 2 01:13:21 2020 +0100
+
+    added map fragment into User Interface
+
+[33mcommit d625271c319c0f25cb5e76d85f1bc02d58c11422[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Mon Sep 28 01:42:01 2020 +0200
+
+    Added user interface to save travel details. Updated UI in Map fragment file
+
+[33mcommit 6972b228b7ae6b8cac4a8bd0d80e51794167b995[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Mon Sep 28 01:11:51 2020 +0200
+
+    added listview as user interface
+
+[33mcommit a75f2a0c27293707003269c01a87a7529821d29d[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Mon Sep 28 00:28:04 2020 +0200
+
+    added edittext and button in user interface.
+
+[33mcommit 275e63376e27c18257b512f8b9cfe193ea5ad89a[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Sat Sep 26 12:26:55 2020 +0200
+
+    First Commit UI design
+
+[33mcommit ad8e7a8e07539bcf7b928ee335557efadbf28f21[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Sat Sep 26 12:15:29 2020 +0200
+
+    map fragment modified
+
+[33mcommit 11815483727e19ccdeb12b311d498968ad6bb5a1[m
+Author: grnsaifkhan <saifkhan110180@gmail.com>
+Date:   Sat Sep 26 12:01:15 2020 +0200
+
+    updated ui design
