@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_weight="1"
     android:background="@color/colorPrimaryDark">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp"
+        android:layout_weight="0.9"
         tools:ignore="MissingConstraints">
         <EditText
-            android:id="@+id/destination"
+            android:id="@+id/start_point"
             android:hint="Starting Point"
-            android:textColorHint="@color/colorPrimary"
+            android:textColorHint="@color/hintsColor"
             android:textColor="@color/writingYellow"
             android:backgroundTint="@color/writingYellow"
             android:inputType="text"
@@ -23,22 +26,22 @@
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints" />
         <EditText
-            android:id="@+id/start_point"
+            android:id="@+id/destination"
             android:hint="Destination"
-            android:textColorHint="@color/colorPrimary"
+            android:textColorHint="@color/hintsColor"
             android:textColor="@color/writingYellow"
             android:backgroundTint="@color/writingYellow"
             android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints"/>
-        <?xml version="1.0" encoding="utf-8"?>
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"/>
     </LinearLayout>
 
 
@@ -54,6 +57,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/custom_button_main_selector"
             android:text="Add"
+            android:textColor="@color/hintsColor"
             android:layout_marginBottom="5dp"
             tools:layout_editor_absoluteX="16dp" />
 
@@ -63,9 +67,10 @@
             android:layout_height="wrap_content"
             android:background="@drawable/custom_button_main_selector"
             android:text="Search"
+            android:textColor="@color/hintsColor"
             tools:layout_editor_absoluteX="16dp" />
     </LinearLayout>
 
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
