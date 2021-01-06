@@ -3,18 +3,23 @@ package com.example.travelreminder;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,9 +48,12 @@ public class MapFragment extends Fragment {
     private GoogleMap googleMap;
     EditText et_startPoint, et_destination;
     Button btn_add, btn_search;
+    ImageButton ib_my_location;
     SupportMapFragment supportMapFragment;
     LatLng latLng;
     private FusedLocationProviderClient fusedLocationClient;
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,14 +63,17 @@ public class MapFragment extends Fragment {
         et_destination = (EditText) rootView.findViewById(R.id.destination);
         btn_add = (Button) rootView.findViewById(R.id.add_button);
         btn_search = (Button) rootView.findViewById(R.id.search_button);
+        ib_my_location = (ImageButton)rootView.findViewById(R.id.ib_my_location);
+
         btn_add.setEnabled(false);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
         supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         searchForDestinationPoint();
         clickOnLocationOnMap();
         onStartPointLocation();
+
 
         return rootView;
     }
@@ -147,7 +158,8 @@ public class MapFragment extends Fragment {
     }
 
     private void onStartPointLocation(){
-        et_startPoint.setOnClickListener(new View.OnClickListener() {
+
+        ib_my_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getCurrentLocation();
@@ -205,6 +217,7 @@ public class MapFragment extends Fragment {
                     .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
+                            setLocationListener();
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 // Logic to handle location object
@@ -228,15 +241,44 @@ public class MapFragment extends Fragment {
         }
     }
 
+    public void setLocationListener(){
+
+        Boolean gps_enable, network_enable;
+
+        gps_enable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enable  = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+         if (gps_enable == false) {
+             new AlertDialog.Builder(getActivity())
+                     .setTitle("Location permission required")
+                     .setMessage("Please turn on location")
+                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                         @Override
+                         public void onClick(DialogInterface dialogInterface, int i) {
+                             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                             startActivity(intent);
+                         }
+                     })
+                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                         @Override
+                         public void onClick(DialogInterface dialogInterface, int i) {
+                             dialogInterface.dismiss();
+                         }
+                     })
+                     .create()
+                     .show();
+         }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == MY_PERMISSIONS_REQUEST_CODE){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                //abc
-                onStartPointLocation();
+
             }else{
 
             }
         }
     }
+
 }

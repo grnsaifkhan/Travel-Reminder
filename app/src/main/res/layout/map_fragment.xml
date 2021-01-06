@@ -15,17 +15,29 @@
         android:padding="10dp"
         android:layout_weight="0.9"
         tools:ignore="MissingConstraints">
-        <EditText
-            android:id="@+id/start_point"
-            android:hint="Starting Point"
-            android:textColorHint="@color/hintsColor"
-            android:textColor="@color/writingYellow"
-            android:backgroundTint="@color/writingYellow"
-            android:inputType="text"
-            android:drawableRight="@drawable/ic_baseline_my_location"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
+            >
+            <EditText
+                android:id="@+id/start_point"
+                android:hint="Starting Point"
+                android:textColorHint="@color/hintsColor"
+                android:textColor="@color/writingYellow"
+                android:backgroundTint="@color/writingYellow"
+                android:inputType="text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints" />
+
+            <ImageButton
+                android:id="@+id/ib_my_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/start_point"
+                android:background="@null"
+                android:src="@drawable/ic_baseline_my_location" />
+        </RelativeLayout>
         <EditText
             android:id="@+id/destination"
             android:hint="Destination"
