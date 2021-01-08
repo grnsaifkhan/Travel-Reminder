@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TravelListview_Fragment extends Fragment {
 
@@ -21,17 +22,21 @@ public class TravelListview_Fragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.travel_listview_fragment,container,false);
-        ArrayList<String> travelArrayList = new ArrayList<>();
-        //Dummy Data
-        travelArrayList.add("Chemnitz");
-        travelArrayList.add("Dresden");
-        travelArrayList.add("Leipzig");
-        travelArrayList.add("Berlin");
-        travelArrayList.add("Hermburg");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),R.layout.listview_layout,travelArrayList);
+
+        ArrayList<HashMap<String , String>> arrayList = new ArrayList<>();
+
+        for (int i = 0;i<20;i++){
+            HashMap<String , String> data  = new HashMap<>();
+            data.put("name" , "Munich");
+            data.put("dateText" , "10-01-2021");
+            data.put("timeText", "12:00");
+
+            arrayList.add(data);
+        }
 
         ListView travelList = (ListView) rootView.findViewById(R.id.travel_list_view);
-        travelList.setAdapter(adapter);
+        CustomListViewAdapter customListViewAdapter = new CustomListViewAdapter(getContext(), arrayList);
+        travelList.setAdapter(customListViewAdapter);
 
         return rootView;
     }

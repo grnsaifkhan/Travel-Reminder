@@ -217,7 +217,6 @@ public class MapFragment extends Fragment {
                     .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-                            setLocationListener();
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 // Logic to handle location object
@@ -234,6 +233,9 @@ public class MapFragment extends Fragment {
                                     e.printStackTrace();
                                 }
 
+                            }
+                            else{
+                                setLocationListener();
                             }
                         }
                     });

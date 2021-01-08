@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="12dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_baseline_travel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_marginLeft="4dp"
+        android:text="wish list"
+        android:textColor="@color/writingYellow"
+        android:layout_toRightOf="@id/thumbnail"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_toRightOf="@id/thumbnail"
+        android:text="date"
+        android:textColor="@color/writingYellow"
+        android:layout_below="@id/name"
+        android:layout_marginLeft="5dp"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/timeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name"
+        android:layout_marginLeft="182dp"
+        android:layout_marginTop="0dp"
+        android:layout_toRightOf="@id/thumbnail"
+        android:text="day"
+        android:textColor="@color/writingYellow"
+        android:textSize="12sp"
+        android:textStyle="italic" />
+
+
+</RelativeLayout>
