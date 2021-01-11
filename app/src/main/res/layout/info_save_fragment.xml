@@ -15,17 +15,17 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/destination"
+            android:id="@+id/travel_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/writingYellow"
-            android:hint="Starting Point"
+            android:hint="Travel name"
             android:inputType="text"
             android:textColor="@color/writingYellow"
             android:textColorHint="@color/hintsColor" />
 
         <EditText
-            android:id="@+id/start_point"
+            android:id="@+id/destination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/writingYellow"
@@ -35,34 +35,26 @@
             android:textColorHint="@color/hintsColor" />
 
         <EditText
-            android:id="@+id/travel_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/writingYellow"
-            android:hint="time"
-            android:inputType="date"
-            android:textColor="@color/writingYellow"
-            android:textColorHint="@color/hintsColor" />
-
-        <EditText
             android:id="@+id/travel_day"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/writingYellow"
             android:hint="Travel day"
-            android:inputType="time"
+            android:focusable="false"
             android:textColor="@color/writingYellow"
             android:textColorHint="@color/hintsColor" />
 
+
         <EditText
-            android:id="@+id/travel_name"
+            android:id="@+id/travel_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/writingYellow"
-            android:hint="Travel name"
-            android:inputType="text"
+            android:hint="time"
+            android:focusable="false"
             android:textColor="@color/writingYellow"
             android:textColorHint="@color/hintsColor" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -82,13 +74,6 @@
             android:text="Save"
             android:textColor="@color/hintsColor"/>
 
-        <Button
-            android:id="@+id/back_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/custom_button_main_selector"
-            android:text="Back"
-            android:textColor="@color/hintsColor"/>
     </LinearLayout>
 
 </LinearLayout>
