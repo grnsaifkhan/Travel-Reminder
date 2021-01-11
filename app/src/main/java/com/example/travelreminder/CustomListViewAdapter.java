@@ -45,18 +45,20 @@ public class CustomListViewAdapter extends BaseAdapter {
 
 
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_row, viewGroup, false);
-            TextView name = (TextView) convertView.findViewById(R.id.name);
-            TextView dateText = (TextView) convertView.findViewById(R.id.dateText);
-            TextView timeText = (TextView) convertView.findViewById(R.id.timeText);
+            TextView name = (TextView) convertView.findViewById(R.id.list_name);
+            TextView destination = (TextView) convertView.findViewById(R.id.list_destination);
+            TextView dateText = (TextView) convertView.findViewById(R.id.list_dateText);
+            TextView timeText = (TextView) convertView.findViewById(R.id.list_timeText);
 
             HashMap<String, String> travelDetails = new HashMap<>();
 
-        travelDetails = travels.get(position);
+            travelDetails = travels.get(position);
 
 
-            name.setText(travelDetails.get("name"));
-            dateText.setText(travelDetails.get("dateText"));
-            timeText.setText(travelDetails.get("timeText"));
+            name.setText(travelDetails.get("travel_name"));
+            destination.setText(travelDetails.get("travel_destination"));
+            dateText.setText(travelDetails.get("travel_date"));
+            timeText.setText(travelDetails.get("travel_time"));
 
         return convertView;
     }

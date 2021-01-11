@@ -35,13 +35,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-
+        Log.d(TAG,"create : database: "+sqLiteDatabase);
         String createTable = "CREATE TABLE "+TABLE+" (ID INTEGER PRIMARY KEY AUTOINCREMENT,TRAVEL_NAME TEXT,DESTINATION TEXT,TRAVEL_DATE TEXT,TRAVEL_TIME TEXT)";
         sqLiteDatabase.execSQL(createTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        Log.d(TAG,"upgrade : database: "+sqLiteDatabase+" old version: "+oldVersion+" new version: "+newVersion);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+TABLE);
         onCreate(sqLiteDatabase);
     }
