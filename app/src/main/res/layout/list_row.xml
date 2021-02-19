@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:padding="12dp"
     android:orientation="vertical"
+    android:background="@drawable/list_selector"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -30,7 +31,7 @@
         android:text="Travel name"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textColor="@color/writingYellow"
+        android:textColor="@color/spaceGreen"
         android:layout_toRightOf="@id/thumbnail"
         android:layout_marginRight="80dp"/>
     <TextView
@@ -39,7 +40,7 @@
         android:id="@+id/list_destination"
         android:layout_below="@id/list_name"
         android:text="Destination"
-        android:textColor="@color/writingYellow"
+        android:textColor="@color/spaceGreen"
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@id/thumbnail"
         />
@@ -49,7 +50,7 @@
         android:id="@+id/list_dateText"
         android:layout_below="@id/list_destination"
         android:text="Date:"
-        android:textColor="@color/writingYellow"
+        android:textColor="@color/spaceGreen"
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@id/thumbnail"
         />
@@ -61,6 +62,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/list_dateText"
         android:layout_marginRight="100dp"
-        android:textColor="@color/writingYellow"
+        android:textColor="@color/spaceGreen"
         />
 </RelativeLayout>

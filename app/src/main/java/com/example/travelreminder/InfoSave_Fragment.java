@@ -1,9 +1,13 @@
 package com.example.travelreminder;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +59,6 @@ public class InfoSave_Fragment extends Fragment {
                     warningMessage("Warning!", "Please fill up every text field properly!");
                 }else{
                     boolean inputData = mDatabaseHelper.insertData(et_travel_name.getText().toString(),et_destination.getText().toString(), et_travel_date.getText().toString(),et_travel_time.getText().toString());
-
                     if (inputData == true){
                         warningMessage("Notice : ","Travel info added successfully");
                         et_travel_name.setText("");
@@ -83,7 +86,7 @@ public class InfoSave_Fragment extends Fragment {
                 timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        et_travel_time.setText(selectedHour+":"+selectedMinute);
+                        et_travel_time.setText((selectedHour>9?selectedHour:"0"+selectedHour)+":"+(selectedMinute>9?selectedMinute:"0"+selectedMinute));
                     }
                 },hour,minute,true);
                 timePickerDialog.setTitle("Select Travel time");
@@ -104,13 +107,14 @@ public class InfoSave_Fragment extends Fragment {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        et_travel_date.setText(dayOfMonth+"/"+(month+1)+"/"+year);
+                        et_travel_date.setText((dayOfMonth>9?dayOfMonth:"0"+dayOfMonth)+"/"+((month+1)>9?(month+1):"0"+(month+1))+"/"+year);
                     }
                 },day,month,year);
                 datePickerDialog.show();
             }
         });
     }
+
 
     public void warningMessage(String title,String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

@@ -4,5 +4,6 @@
     <color name="colorPrimaryDark">#0C0C0C</color>
     <color name="colorAccent">#55716F</color>
     <color name="writingYellow">#FFC800</color>
+    <color name="spaceGreen">#00FFB7</color>
     <color name="hintsColor">#A86C6C5D</color>
 </resources>

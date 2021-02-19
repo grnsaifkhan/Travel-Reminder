@@ -18,30 +18,30 @@
             android:id="@+id/travel_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/writingYellow"
+            android:backgroundTint="@color/spaceGreen"
             android:hint="Travel name"
             android:inputType="text"
-            android:textColor="@color/writingYellow"
+            android:textColor="@color/spaceGreen"
             android:textColorHint="@color/hintsColor" />
 
         <EditText
             android:id="@+id/destination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/writingYellow"
+            android:backgroundTint="@color/spaceGreen"
             android:hint="Destination"
             android:inputType="text"
-            android:textColor="@color/writingYellow"
+            android:textColor="@color/spaceGreen"
             android:textColorHint="@color/hintsColor" />
 
         <EditText
             android:id="@+id/travel_day"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/writingYellow"
+            android:backgroundTint="@color/spaceGreen"
             android:hint="Travel day"
             android:focusable="false"
-            android:textColor="@color/writingYellow"
+            android:textColor="@color/spaceGreen"
             android:textColorHint="@color/hintsColor" />
 
 
@@ -49,10 +49,10 @@
             android:id="@+id/travel_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/writingYellow"
+            android:backgroundTint="@color/spaceGreen"
             android:hint="time"
             android:focusable="false"
-            android:textColor="@color/writingYellow"
+            android:textColor="@color/spaceGreen"
             android:textColorHint="@color/hintsColor" />
 
     </LinearLayout>

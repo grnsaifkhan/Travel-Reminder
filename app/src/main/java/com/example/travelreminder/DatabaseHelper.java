@@ -72,4 +72,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor data = sqLiteDatabase.rawQuery(query, null);
         return data;
     }
+
+    public Cursor getAllItemOf(String travelName){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM "+TABLE+
+                " WHERE "+TRAVEL_NAME+" = '" + travelName +"'";
+
+        Cursor data = db.rawQuery(query,null);
+        return data;
+    }
+
+    public Cursor getAllItemOfId(int travel_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM "+TABLE+
+                " WHERE "+ID+" = '" + travel_id +"'";
+
+        Cursor data = db.rawQuery(query,null);
+        return data;
+
+    }
+
+    //query for deleting database
+    public void deleteData(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String query = "DELETE FROM "+TABLE+" WHERE "+ID+" = '"+id+"'";
+        Log.d(TAG,"deleteName: query: "+query);
+
+        db.execSQL(query);
+
+    }
 }
