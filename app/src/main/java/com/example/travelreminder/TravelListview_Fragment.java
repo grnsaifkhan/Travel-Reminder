@@ -4,8 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,12 +17,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class TravelListview_Fragment extends Fragment {
@@ -69,6 +72,25 @@ public class TravelListview_Fragment extends Fragment {
         customListViewAdapter = new CustomListViewAdapter(getContext(), arrayList);
         travelList.setAdapter(customListViewAdapter);
 
+        travelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                HashMap<String, String> travelDetails = new HashMap<>();
+                travelDetails = arrayList.get(i);
+                final int position = i;
+                final String travelId = travelDetails.get("travel_id");
+                String travelName = travelDetails.get("travel_name");
+                String destination = travelDetails.get("travel_destination");
+                String travelDate = travelDetails.get("travel_date");
+                String travelTime = travelDetails.get("travel_time");
+                String[] date = travelDate.split("/");
+                String[] time = travelTime.split(":");
+                alarmCreator(travelId,travelName,destination,travelDate,travelTime);
+
+
+            }
+        });
+
         travelList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(final AdapterView<?> adapterView, View view, int i, long l) {
@@ -103,6 +125,58 @@ public class TravelListview_Fragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void alarmCreator(String travelId, final String travelName, final String destination, final String travelDate, final String travelTime) {
+        final int notificationId = 1;
+        final String[] date = travelDate.split("/");
+        final String[] time = travelTime.split(":");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Notify you?");
+        builder.setMessage("Travel name: "+ travelName+"\n Destination: "+destination+"\n Travel Date: "
+                +travelDate+"\n Travel time: "+travelTime);
+        builder.setPositiveButton("Notify me", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Calendar myAlarmTime = Calendar.getInstance();
+                myAlarmTime.setTimeInMillis(System.currentTimeMillis());
+                myAlarmTime.set(Integer.parseInt(date[2]),(Integer.parseInt(date[1])-1) , Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]), 0);
+                AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+
+                Intent _myIntent = new Intent(getContext(), TourNotificationReceiver.class);
+                _myIntent.putExtra("notificationid",notificationId);
+                _myIntent.putExtra("travelName",travelName);
+                _myIntent.putExtra("destination",destination);
+                _myIntent.putExtra("travelDate",travelDate);
+                _myIntent.putExtra("travelTime",travelTime);
+                PendingIntent _myPendingIntent = PendingIntent.getBroadcast(getContext(), 0, _myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmTime.getTimeInMillis(),_myPendingIntent);
+
+                Toast.makeText(getContext(), "You will be notified!!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    public void warningMessage(String title,String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setCancelable(false);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
 
