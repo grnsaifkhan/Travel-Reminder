@@ -15,39 +15,58 @@
         android:padding="10dp"
         android:layout_weight="0.9"
         tools:ignore="MissingConstraints">
+        <EditText
+            android:id="@+id/travel_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/spaceGreen"
+            android:hint="Travel name"
+            android:inputType="text"
+            android:textColor="@color/spaceGreen"
+            android:textColorHint="@color/hintsColor" />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
             <EditText
-                android:id="@+id/start_point"
-                android:hint="Starting Point"
+                android:id="@+id/destination"
+                android:hint="Destination"
                 android:textColorHint="@color/hintsColor"
                 android:textColor="@color/spaceGreen"
                 android:backgroundTint="@color/spaceGreen"
                 android:inputType="text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints" />
+                tools:ignore="MissingConstraints"/>
 
             <ImageButton
                 android:id="@+id/ib_my_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@id/start_point"
+                android:layout_alignRight="@id/destination"
                 android:background="@null"
                 android:src="@drawable/ic_baseline_my_location" />
         </RelativeLayout>
         <EditText
-            android:id="@+id/destination"
-            android:hint="Destination"
-            android:textColorHint="@color/hintsColor"
-            android:textColor="@color/spaceGreen"
-            android:backgroundTint="@color/spaceGreen"
-            android:inputType="text"
+            android:id="@+id/travel_day"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"/>
+            android:backgroundTint="@color/spaceGreen"
+            android:hint="Travel date"
+            android:focusable="false"
+            android:textColor="@color/spaceGreen"
+            android:textColorHint="@color/hintsColor" />
+
+
+        <EditText
+            android:id="@+id/travel_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/spaceGreen"
+            android:hint="Start time"
+            android:focusable="false"
+            android:textColor="@color/spaceGreen"
+            android:textColorHint="@color/hintsColor" />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -58,21 +77,24 @@
     </LinearLayout>
 
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_margin="10dp"
         app:layout_constraintBottom_toBottomOf="parent">
         <Button
-            android:id="@+id/add_button"
+            android:id="@+id/save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/custom_button_main_selector"
-            android:text="Add"
+            android:text="Save"
             android:textColor="@color/hintsColor"
+            android:layout_weight="0.5"
             android:layout_marginBottom="5dp"
-            tools:layout_editor_absoluteX="16dp" />
+            tools:layout_editor_absoluteX="16dp"
+            android:layout_marginRight="2dp"/>
 
         <Button
             android:id="@+id/search_button"
@@ -80,8 +102,10 @@
             android:layout_height="wrap_content"
             android:background="@drawable/custom_button_main_selector"
             android:text="Search"
+            android:layout_weight="0.5"
             android:textColor="@color/hintsColor"
-            tools:layout_editor_absoluteX="16dp" />
+            tools:layout_editor_absoluteX="16dp"
+            android:layout_marginLeft="2dp"/>
     </LinearLayout>
 
 

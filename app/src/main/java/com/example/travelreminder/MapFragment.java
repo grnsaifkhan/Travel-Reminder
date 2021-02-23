@@ -3,6 +3,9 @@ package com.example.travelreminder;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.FragmentTransaction;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,8 +21,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,18 +44,25 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 public class MapFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_CODE = 1;
+
     MapView mMapView;
     private GoogleMap googleMap;
-    EditText et_startPoint, et_destination;
-    Button btn_add, btn_search;
+
+    DatabaseHelper mDatabaseHelper;
+
+    EditText et_travel_name,et_destination,et_travel_date,et_travel_time;
+    Button bt_save, btn_search;
     ImageButton ib_my_location;
+
     SupportMapFragment supportMapFragment;
     LatLng latLng;
+
     private FusedLocationProviderClient fusedLocationClient;
     LocationManager locationManager;
     LocationListener locationListener;
@@ -59,13 +71,16 @@ public class MapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.map_fragment, container, false);
 
-        et_startPoint = (EditText) rootView.findViewById(R.id.start_point);
+        et_travel_name = (EditText) rootView.findViewById(R.id.travel_name);
         et_destination = (EditText) rootView.findViewById(R.id.destination);
-        btn_add = (Button) rootView.findViewById(R.id.add_button);
+        et_travel_date = (EditText) rootView.findViewById(R.id.travel_day);
+        et_travel_time = (EditText) rootView.findViewById(R.id.travel_time);
+        bt_save = (Button) rootView.findViewById(R.id.save_button);
         btn_search = (Button) rootView.findViewById(R.id.search_button);
         ib_my_location = (ImageButton)rootView.findViewById(R.id.ib_my_location);
 
-        btn_add.setEnabled(false);
+        mDatabaseHelper = new DatabaseHelper(getContext());
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -74,9 +89,13 @@ public class MapFragment extends Fragment {
         clickOnLocationOnMap();
         onStartPointLocation();
 
+        insertData();
+        editTextToTimePicker();
+        editTextToDatePicker();
 
         return rootView;
     }
+
 
 
     private void searchForDestinationPoint() {
@@ -91,7 +110,6 @@ public class MapFragment extends Fragment {
                         List<Address> addressList = null;
                      try {
                          if (destPoint != null || !destPoint.equals("")){
-                             btn_add.setEnabled(true);
                              Geocoder geocoder = new Geocoder(getActivity());
                              try {
                                  addressList = geocoder.getFromLocationName(destPoint,1);
@@ -114,7 +132,6 @@ public class MapFragment extends Fragment {
                          }
                      } catch (Exception e) {
                          e.printStackTrace();
-                         btn_add.setEnabled(false);
                          et_destination.setError("Please fill up destination properly");
                      }
 
@@ -228,7 +245,7 @@ public class MapFragment extends Fragment {
                                 try {
                                     addresses = geocoder.getFromLocation(latitude,longitude,1);
                                     String address = addresses.get(0).getAddressLine(0);
-                                    et_startPoint.setText(address);
+                                    et_destination.setText(address);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -281,6 +298,87 @@ public class MapFragment extends Fragment {
 
             }
         }
+    }
+
+
+    public void insertData(){
+        bt_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (et_travel_name.length() == 0 || et_destination.length() == 0 ||et_travel_date.length()==0||et_travel_time.length()==0){
+                    warningMessage("Warning!", "Please fill up every text field properly!");
+                }else{
+                    boolean inputData = mDatabaseHelper.insertData(et_travel_name.getText().toString(),et_destination.getText().toString(), et_travel_date.getText().toString(),et_travel_time.getText().toString());
+                    if (inputData == true){
+                        warningMessage("Notice : ","Travel info added successfully");
+                        et_travel_name.setText("");
+                        et_destination.setText("");
+                        et_travel_date.setText("");
+                        et_travel_time.setText("");
+                    }
+                    else {
+                        warningMessage("Warning","Data not inserted");
+                    }
+                }
+            }
+        });
+    }
+
+    public void editTextToTimePicker(){
+        et_travel_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar mCurrentTime =  Calendar.getInstance();
+                int hour = mCurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mCurrentTime.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog;
+                timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        et_travel_time.setText((selectedHour>9?selectedHour:"0"+selectedHour)+":"+(selectedMinute>9?selectedMinute:"0"+selectedMinute));
+                    }
+                },hour,minute,true);
+                timePickerDialog.setTitle("Select Travel time");
+                timePickerDialog.show();
+            }
+        });
+    }
+
+    public void editTextToDatePicker(){
+        et_travel_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        et_travel_date.setText((dayOfMonth>9?dayOfMonth:"0"+dayOfMonth)+"/"+((month+1)>9?(month+1):"0"+(month+1))+"/"+year);
+                    }
+                },day,month,year);
+                datePickerDialog.setTitle("Select Travel date");
+                datePickerDialog.show();
+            }
+        });
+    }
+
+
+    public void warningMessage(String title,String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setCancelable(false);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
 }

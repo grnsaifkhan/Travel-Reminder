@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -129,8 +130,10 @@ public class TravelListview_Fragment extends Fragment {
 
     public void alarmCreator(String travelId, final String travelName, final String destination, final String travelDate, final String travelTime) {
         final int notificationId = 1;
+        final int RQS_1 = 1002;
         final String[] date = travelDate.split("/");
         final String[] time = travelTime.split(":");
+        final int travelID = Integer.parseInt(travelId);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Notify you?");
@@ -142,7 +145,10 @@ public class TravelListview_Fragment extends Fragment {
                 Calendar myAlarmTime = Calendar.getInstance();
                 myAlarmTime.setTimeInMillis(System.currentTimeMillis());
                 myAlarmTime.set(Integer.parseInt(date[2]),(Integer.parseInt(date[1])-1) , Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]), 0);
+
+
                 AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+                if (alarmManager==null) return;
 
                 Intent _myIntent = new Intent(getContext(), TourNotificationReceiver.class);
                 _myIntent.putExtra("notificationid",notificationId);
@@ -150,33 +156,40 @@ public class TravelListview_Fragment extends Fragment {
                 _myIntent.putExtra("destination",destination);
                 _myIntent.putExtra("travelDate",travelDate);
                 _myIntent.putExtra("travelTime",travelTime);
-                PendingIntent _myPendingIntent = PendingIntent.getBroadcast(getContext(), 0, _myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent _myPendingIntent = PendingIntent.getBroadcast(getContext(),
+                        RQS_1+Integer.parseInt(date[0])+Integer.parseInt(date[1])+Integer.parseInt(date[2])+Integer.parseInt(time[0])+Integer.parseInt(time[1]),
+                        _myIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
                 alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmTime.getTimeInMillis(),_myPendingIntent);
 
                 Toast.makeText(getContext(), "You will be notified!!", Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Dismiss Notification", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                cancelAlarm(RQS_1,Integer.parseInt(date[0]),Integer.parseInt(date[1]),Integer.parseInt(date[2]),
+                        Integer.parseInt(time[0]),Integer.parseInt(time[1]));
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
                 dialog.cancel();
             }
         });
         builder.show();
     }
 
-    public void warningMessage(String title,String message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setCancelable(false);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
+    public void cancelAlarm(int RQS_1,int day,int month,int year,int hour, int minute) {
+        Intent intent = new Intent(getContext(), TourNotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getContext(), RQS_1 + day + month + year + hour + minute, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
+        Toast.makeText(getContext(), "Notification is dismissed", Toast.LENGTH_SHORT).show();
+
     }
 
 

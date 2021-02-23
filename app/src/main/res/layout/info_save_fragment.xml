@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/spaceGreen"
-            android:hint="Travel day"
+            android:hint="Travel Date"
             android:focusable="false"
             android:textColor="@color/spaceGreen"
             android:textColorHint="@color/hintsColor" />
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/spaceGreen"
-            android:hint="time"
+            android:hint="Start Time"
             android:focusable="false"
             android:textColor="@color/spaceGreen"
             android:textColorHint="@color/hintsColor" />

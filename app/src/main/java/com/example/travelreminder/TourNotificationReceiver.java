@@ -24,7 +24,7 @@ public class TourNotificationReceiver extends BroadcastReceiver {
         String travelTime = intent.getStringExtra("travelTime");
 
         //call listview Fragment while notification is tabbed
-        Intent mainIntent = new Intent(context,TravelListview_Fragment.class);
+        Intent mainIntent = new Intent(context,MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context,0,mainIntent,0
         );
@@ -42,7 +42,7 @@ public class TourNotificationReceiver extends BroadcastReceiver {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_menu_mapmode)
+                .setSmallIcon(R.drawable.smallicon)
                 .setContentTitle("Tour name: "+travelName)
                 .setContentText("Destination: "+destination+"\n Date: "+travelDate+"\n Time: "+travelTime)
                 .setContentIntent(contentIntent)
