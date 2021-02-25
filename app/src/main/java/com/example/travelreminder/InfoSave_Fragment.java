@@ -2,8 +2,14 @@ package com.example.travelreminder;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,117 +17,92 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
 public class InfoSave_Fragment extends Fragment {
 
+    private static final String CHANNEL_ID = "CHANNEL_TWO";
+
+    private ProgressBar mProgressBar;
+    private int mProgressStatus ;
+    private TextView mTextViewPercentage;
+
     DatabaseHelper mDatabaseHelper;
     Button bt_save;
-    EditText et_travel_name, et_destination, et_travel_date, et_travel_time;
+    EditText et_travel_name, et_destination;
+
+    GoogleMap googleMap;
+    SupportMapFragment supportMapFragment;
+    LocationManager locationManager;
+    LocationListener locationListener;
+
+    //Firebase
+    DatabaseReference databaseReference;
+    final long MIN_TIME = 1000;
+    final long MIN_DIST = 5;
+
+
+
+
+    LatLng latLng;
+
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.info_save_fragment, container, false);
 
-        et_travel_name = (EditText) rootView.findViewById(R.id.travel_name);
-        et_destination = (EditText) rootView.findViewById(R.id.destination);
-        et_travel_date = (EditText) rootView.findViewById(R.id.travel_day);
-        et_travel_time = (EditText) rootView.findViewById(R.id.travel_time);
+        //supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
         bt_save = (Button)rootView.findViewById(R.id.save_button);
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.pb);
+        mTextViewPercentage = (TextView) rootView.findViewById(R.id.tv_percentage);
 
-        mDatabaseHelper = new DatabaseHelper(getContext());
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("BatteryState");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()){
+                    double percentage = (Double)dataSnapshot.getValue();
+                    mProgressStatus = (int)(percentage*100);
+                    mProgressBar.setProgress(mProgressStatus);
+                    mTextViewPercentage.setText(""+mProgressStatus+"%");
+                }
+            }
 
-        insertData();
-        editTextToTimePicker();
-        editTextToDatePicker();
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        /*fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);*/
 
 
         return rootView;
     }
 
-    public void insertData(){
-        bt_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (et_travel_name.length() == 0 || et_destination.length() == 0 ||et_travel_date.length()==0||et_travel_time.length()==0){
-                    warningMessage("Warning!", "Please fill up every text field properly!");
-                }else{
-                    boolean inputData = mDatabaseHelper.insertData(et_travel_name.getText().toString(),et_destination.getText().toString(), et_travel_date.getText().toString(),et_travel_time.getText().toString());
-                    if (inputData == true){
-                        warningMessage("Notice : ","Travel info added successfully");
-                        et_travel_name.setText("");
-                        et_destination.setText("");
-                        et_travel_date.setText("");
-                        et_travel_time.setText("");
-                    }
-                    else {
-                        warningMessage("Warning","Data not inserted");
-                    }
-                }
-            }
-        });
-    }
-
-    public void editTextToTimePicker(){
-        et_travel_time.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar mCurrentTime =  Calendar.getInstance();
-                int hour = mCurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mCurrentTime.get(Calendar.MINUTE);
-
-                TimePickerDialog timePickerDialog;
-                timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        et_travel_time.setText((selectedHour>9?selectedHour:"0"+selectedHour)+":"+(selectedMinute>9?selectedMinute:"0"+selectedMinute));
-                    }
-                },hour,minute,true);
-                timePickerDialog.setTitle("Select Travel time");
-                timePickerDialog.show();
-            }
-        });
-    }
-
-    public void editTextToDatePicker(){
-        et_travel_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        et_travel_date.setText((dayOfMonth>9?dayOfMonth:"0"+dayOfMonth)+"/"+((month+1)>9?(month+1):"0"+(month+1))+"/"+year);
-                    }
-                },day,month,year);
-                datePickerDialog.show();
-            }
-        });
-    }
-
-
-    public void warningMessage(String title,String message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setCancelable(false);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
-    }
 }
