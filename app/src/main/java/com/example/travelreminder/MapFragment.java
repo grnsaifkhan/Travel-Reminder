@@ -10,6 +10,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -39,6 +42,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -88,6 +93,7 @@ public class MapFragment extends Fragment {
         searchForDestinationPoint();
         clickOnLocationOnMap();
         onStartPointLocation();
+        autoCurrentLocationTrack();
 
         insertData();
         editTextToTimePicker();
@@ -113,20 +119,24 @@ public class MapFragment extends Fragment {
                              Geocoder geocoder = new Geocoder(getActivity());
                              try {
                                  addressList = geocoder.getFromLocationName(destPoint,1);
+                                 Address address = addressList.get(0);
+                                 latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                                 String destinationName = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1).get(0).getAddressLine(0);
+
+                                 MarkerOptions markerOptions = new MarkerOptions();
+                                 markerOptions.position(latLng);
+                                 markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_destination_focus));
+                                 markerOptions.title("Destination");
+                                 markerOptions.snippet(destinationName);
+                                 googleMap.clear();
+                                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                         latLng, 15
+
+                                 ));
+                                 googleMap.addMarker(markerOptions);
                              } catch (IOException e) {
                                  e.printStackTrace();
                              }
-                             Address address = addressList.get(0);
-                             latLng = new LatLng(address.getLatitude(),address.getLongitude());
-                             MarkerOptions markerOptions = new MarkerOptions();
-                             markerOptions.position(latLng);
-                             markerOptions.title("Destination");
-                             googleMap.clear();
-                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                     latLng, 15
-
-                             ));
-                             googleMap.addMarker(markerOptions);
 
                              Toast.makeText(getActivity(), latLng.toString(), Toast.LENGTH_SHORT).show();
                          }
@@ -155,19 +165,21 @@ public class MapFragment extends Fragment {
                         try {
                             addresses = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
                             String address = addresses.get(0).getAddressLine(0);
+                            MarkerOptions markerOptions = new MarkerOptions();
+                            markerOptions.position(latLng);
+                            markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_destination_focus));
+                            markerOptions.title("Destination");
+                            markerOptions.snippet(address);
+                            googleMap.clear();
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                    latLng, 15
+
+                            ));
+                            googleMap.addMarker(markerOptions);
                             et_destination.setText(address);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        MarkerOptions markerOptions = new MarkerOptions();
-                        markerOptions.position(latLng);
-                        markerOptions.title("Destination");
-                        googleMap.clear();
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                latLng, 15
-
-                        ));
-                        googleMap.addMarker(markerOptions);
                     }
                 });
             }
@@ -258,6 +270,106 @@ public class MapFragment extends Fragment {
                     });
 
         }
+    }
+
+    public void autoCurrentLocationTrack(){
+        supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(final GoogleMap googleMap) {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
+
+                    // Permission is not granted
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                            Manifest.permission.ACCESS_COARSE_LOCATION) && ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Required Location Permission")
+                                .setMessage("Allow permission to access this feature")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        ActivityCompat.requestPermissions(getActivity(),
+                                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
+                                                MY_PERMISSIONS_REQUEST_CODE);
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
+
+
+                    } else {
+                        // No explanation needed; request the permission
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
+                                MY_PERMISSIONS_REQUEST_CODE);
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                } else {
+                    // Permission has already been granted
+                    fusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations this can be null.
+                                    if (location != null) {
+                                        // Logic to handle location object
+                                        Double latitude = location.getLatitude();
+                                        Double longitude = location.getLongitude();
+
+                                        Geocoder geocoder = new Geocoder(getActivity());
+                                        List<Address> addresses = null;
+                                        try {
+                                            addresses = geocoder.getFromLocation(latitude,longitude,1);
+                                            String address = addresses.get(0).getAddressLine(0);
+                                            latLng = new LatLng(latitude,longitude);
+                                            MarkerOptions markerOptions = new MarkerOptions();
+                                            markerOptions.position(latLng);
+                                            markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_current_location));
+                                            markerOptions.title("Current Location");
+                                            markerOptions.snippet(address);
+                                            googleMap.clear();
+                                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                                    latLng, 15
+
+                                            ));
+                                            googleMap.addMarker(markerOptions);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                    else{
+                                        setLocationListener();
+                                    }
+                                }
+                            });
+
+                }
+            }
+        });
+    }
+
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
     public void setLocationListener(){

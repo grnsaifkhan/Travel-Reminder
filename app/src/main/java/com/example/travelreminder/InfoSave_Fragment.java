@@ -1,12 +1,5 @@
 package com.example.travelreminder;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
@@ -80,7 +73,7 @@ public class InfoSave_Fragment extends Fragment {
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.pb);
         mTextViewPercentage = (TextView) rootView.findViewById(R.id.tv_percentage);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("BatteryState");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("AutoStatus");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
