@@ -20,6 +20,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -49,12 +51,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static android.app.Activity.RESULT_OK;
+
 public class MapFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_CODE = 1;
+    private static final int RECOGNIZER_RESULT = 1;
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -63,7 +69,7 @@ public class MapFragment extends Fragment {
 
     EditText et_travel_name,et_destination,et_travel_date,et_travel_time;
     Button bt_save, btn_search;
-    ImageButton ib_my_location;
+    ImageButton ib_voice_command;
 
     SupportMapFragment supportMapFragment;
     LatLng latLng;
@@ -82,7 +88,7 @@ public class MapFragment extends Fragment {
         et_travel_time = (EditText) rootView.findViewById(R.id.travel_time);
         bt_save = (Button) rootView.findViewById(R.id.save_button);
         btn_search = (Button) rootView.findViewById(R.id.search_button);
-        ib_my_location = (ImageButton)rootView.findViewById(R.id.ib_my_location);
+        ib_voice_command = (ImageButton)rootView.findViewById(R.id.ib_my_location);
 
         mDatabaseHelper = new DatabaseHelper(getContext());
 
@@ -92,7 +98,7 @@ public class MapFragment extends Fragment {
 
         searchForDestinationPoint();
         clickOnLocationOnMap();
-        onStartPointLocation();
+        onVoiceSearch();
         autoCurrentLocationTrack();
 
         insertData();
@@ -114,37 +120,34 @@ public class MapFragment extends Fragment {
                     public void onClick(View view) {
                         String destPoint = et_destination.getText().toString();
                         List<Address> addressList = null;
-                     try {
-                         if (destPoint != null || !destPoint.equals("")){
-                             Geocoder geocoder = new Geocoder(getActivity());
-                             try {
-                                 addressList = geocoder.getFromLocationName(destPoint,1);
-                                 Address address = addressList.get(0);
-                                 latLng = new LatLng(address.getLatitude(),address.getLongitude());
-                                 String destinationName = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1).get(0).getAddressLine(0);
+                        try {
+                            if (destPoint != null || !destPoint.equals("")){
+                                Geocoder geocoder = new Geocoder(getActivity());
+                                try {
+                                    addressList = geocoder.getFromLocationName(destPoint,1);
+                                    Address address = addressList.get(0);
+                                    latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                                    String destinationName = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1).get(0).getAddressLine(0);
 
-                                 MarkerOptions markerOptions = new MarkerOptions();
-                                 markerOptions.position(latLng);
-                                 markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_destination_focus));
-                                 markerOptions.title("Destination");
-                                 markerOptions.snippet(destinationName);
-                                 googleMap.clear();
-                                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                         latLng, 15
+                                    MarkerOptions markerOptions = new MarkerOptions();
+                                    markerOptions.position(latLng);
+                                    markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_destination_focus));
+                                    markerOptions.title("Destination");
+                                    markerOptions.snippet(destinationName);
+                                    googleMap.clear();
+                                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                            latLng, 15
 
-                                 ));
-                                 googleMap.addMarker(markerOptions);
-                             } catch (IOException e) {
-                                 e.printStackTrace();
-                             }
-
-                             Toast.makeText(getActivity(), latLng.toString(), Toast.LENGTH_SHORT).show();
-                         }
-                     } catch (Exception e) {
-                         e.printStackTrace();
-                         et_destination.setError("Please fill up destination properly");
-                     }
-
+                                    ));
+                                    googleMap.addMarker(markerOptions);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            et_destination.setError("Please fill up destination properly");
+                        }
                     }
                 });
             }
@@ -186,14 +189,64 @@ public class MapFragment extends Fragment {
         });
     }
 
-    private void onStartPointLocation(){
+    private void onVoiceSearch(){
 
-        ib_my_location.setOnClickListener(new View.OnClickListener() {
+        ib_voice_command.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCurrentLocation();
+                //getCurrentLocation();
+                Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Ask location");
+                startActivityForResult(speechIntent,RECOGNIZER_RESULT);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == RECOGNIZER_RESULT && resultCode == RESULT_OK){
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            et_destination.setText(matches.get(0).toString());
+
+            supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    String destPoint = et_destination.getText().toString();
+                    List<Address> addressList = null;
+                    try {
+                        if (destPoint != null || !destPoint.equals("")){
+                            Geocoder geocoder = new Geocoder(getActivity());
+                            try {
+                                addressList = geocoder.getFromLocationName(destPoint,1);
+                                Address address = addressList.get(0);
+                                latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                                String destinationName = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1).get(0).getAddressLine(0);
+
+                                MarkerOptions markerOptions = new MarkerOptions();
+                                markerOptions.position(latLng);
+                                markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_destination_focus));
+                                markerOptions.title("Destination");
+                                markerOptions.snippet(destinationName);
+                                googleMap.clear();
+                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                        latLng, 15
+
+                                ));
+                                googleMap.addMarker(markerOptions);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        et_destination.setError("Please fill up destination properly");
+                    }
+                }
+            });
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void getCurrentLocation(){
@@ -348,6 +401,7 @@ public class MapFragment extends Fragment {
                                             ));
                                             googleMap.addMarker(markerOptions);
                                         } catch (IOException e) {
+                                            warningMessage("Something went wrong","Unable to find your current location. Please restart app");
                                             e.printStackTrace();
                                         }
 
@@ -357,7 +411,6 @@ public class MapFragment extends Fragment {
                                     }
                                 }
                             });
-
                 }
             }
         });
@@ -398,6 +451,8 @@ public class MapFragment extends Fragment {
                      })
                      .create()
                      .show();
+         }else{
+             autoCurrentLocationTrack();
          }
     }
 
@@ -405,7 +460,7 @@ public class MapFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == MY_PERMISSIONS_REQUEST_CODE){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
+                autoCurrentLocationTrack();
             }else{
 
             }

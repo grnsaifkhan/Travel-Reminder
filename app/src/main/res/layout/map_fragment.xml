@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignRight="@id/destination"
                 android:background="@null"
-                android:src="@drawable/ic_baseline_my_location" />
+                android:src="@drawable/ic_baseline_mic_24" />
         </RelativeLayout>
         <EditText
             android:id="@+id/travel_day"

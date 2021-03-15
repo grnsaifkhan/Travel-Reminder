@@ -8,7 +8,6 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.FirebaseDatabase;
@@ -17,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     Fragment mapViewFragment;
-    Fragment infoSaveFragment;
+    Fragment carControlFragment;
     Fragment travelListFragment;
 
     @Override
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mapViewFragment = new MapFragment();
-        infoSaveFragment = new InfoSave_Fragment();
+        carControlFragment = new CarControlFragment();
         travelListFragment = new TravelListview_Fragment();
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation) ;
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
@@ -69,10 +68,10 @@ public class MainActivity extends AppCompatActivity {
                                     .commit();
                             return true;
 
-                        case R.id.menu_search:
+                        case R.id.car_control:
                             getSupportFragmentManager()
                                     .beginTransaction()
-                                    .replace(R.id.fragment_container,infoSaveFragment)
+                                    .replace(R.id.fragment_container,carControlFragment)
                                     .commit();
                             return true;
                         case R.id.menu_account:

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="376dp"
+        android:layout_margin="10dp"
+        android:layout_weight="0.5"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="16dp">
+
+            <ProgressBar
+                android:id="@+id/pb"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="153dp"
+                android:layout_height="72dp"
+                android:layout_centerInParent="false"
+                android:progressDrawable="@drawable/progressbar_states" />
+
+            <TextView
+                android:id="@+id/tv_percentage"
+                android:layout_width="149dp"
+                android:layout_height="48dp"
+                android:layout_alignLeft="@+id/pb"
+                android:layout_alignTop="@+id/pb"
+                android:layout_alignRight="@+id/pb"
+                android:layout_alignBottom="@+id/pb"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginBottom="23dp"
+                android:gravity="center"
+                android:text="0%"
+                android:textColor="@color/writingYellow"
+                android:textSize="20dp" />
+
+            <ImageView
+                android:layout_width="5dp"
+                android:layout_height="18dp"
+                android:layout_alignLeft="@+id/pb"
+                android:layout_alignTop="@+id/pb"
+                android:layout_alignRight="@+id/pb"
+                android:layout_marginLeft="150dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="-5dp"
+                android:background="@color/hintsColor"
+                android:gravity="center"
+                android:text="0%" />
+
+            <TextView
+                android:id="@+id/tv_battery_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/pb"
+                android:paddingLeft="20dp"
+                android:paddingTop="30dp"
+                android:text="Battery State"
+                android:textColor="@color/spaceGreen"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+
+            <Button
+                android:id="@+id/bt_powerStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/custom_button_main_selector"
+                android:text="Power Status"
+                android:textColor="@color/hintsColor" />
+
+            <Button
+                android:id="@+id/bt_carLockStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/custom_button_main_selector"
+                android:text="Lock Status"
+                android:textColor="@color/hintsColor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Door Status"
+                android:textColor="@color/spaceGreen"
+                android:layout_weight="0.25"/>
+            <TextView
+                android:id="@+id/tv_doorLockStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Door Data"
+                android:textColor="@color/writingYellow"
+                android:layout_weight="0.25"/>
+
+            <Button
+                android:id="@+id/bt_doorLockStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button_main_selector"
+                android:text="Door Button"
+                android:layout_marginLeft="1dp"
+                android:textColor="@color/hintsColor"
+                android:layout_weight="0.25"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Head light"
+                android:textColor="@color/spaceGreen"
+                android:layout_weight="0.25"/>
+            <TextView
+                android:id="@+id/tv_headlightStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Head Light Data"
+                android:textColor="@color/writingYellow"
+                android:layout_weight="0.25"/>
+
+            <Button
+                android:id="@+id/bt_headlightStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button_main_selector"
+                android:text="Headlight Button"
+                android:layout_marginLeft="1dp"
+                android:textColor="@color/hintsColor"
+                android:layout_weight="0.25"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Air Cooler"
+                android:textColor="@color/spaceGreen"
+                android:layout_weight="0.25"/>
+
+            <Button
+                android:id="@+id/bt_ac_status"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button_main_selector"
+                android:text="off"
+                android:textSize="20sp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:textColor="@color/hintsColor"/>
+
+            <Button
+                android:id="@+id/bt_temperatureStatusDecrs"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button_main_selector"
+                android:text="-"
+                android:textSize="20sp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:textColor="@color/hintsColor"/>
+
+            <TextView
+                android:id="@+id/tv_temperatureStatus"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:gravity="center"
+                android:text="0°C"
+                android:textColor="@color/writingYellow" />
+
+            <Button
+                android:id="@+id/bt_temperatureStatusIncrs"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button_main_selector"
+                android:text="+"
+                android:textSize="20sp"
+                android:layout_marginLeft="1dp"
+                android:textColor="@color/hintsColor" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
