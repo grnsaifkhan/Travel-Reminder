@@ -72,7 +72,8 @@ public class MapFragment extends Fragment {
     ImageButton ib_voice_command;
 
     SupportMapFragment supportMapFragment;
-    LatLng latLng;
+    LatLng latLng, currentLocLatLng;
+    double globalCurrLatitude = -999999, globalCurrLongitude=-99999;
 
     private FusedLocationProviderClient fusedLocationClient;
     LocationManager locationManager;
@@ -127,13 +128,15 @@ public class MapFragment extends Fragment {
                                     addressList = geocoder.getFromLocationName(destPoint,1);
                                     Address address = addressList.get(0);
                                     latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                                    currentLocLatLng = new LatLng(globalCurrLatitude,globalCurrLongitude);
+                                    String distance = getDistance(currentLocLatLng,latLng);
                                     String destinationName = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1).get(0).getAddressLine(0);
 
                                     MarkerOptions markerOptions = new MarkerOptions();
                                     markerOptions.position(latLng);
                                     markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_destination_focus));
-                                    markerOptions.title("Destination");
-                                    markerOptions.snippet(destinationName);
+                                    markerOptions.title(destinationName);
+                                    markerOptions.snippet(distance+" away from your location");
                                     googleMap.clear();
                                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                             latLng, 15
@@ -164,6 +167,8 @@ public class MapFragment extends Fragment {
                     public void onMapClick(LatLng latLng) {
                         et_destination.setError(null);
                         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+                        currentLocLatLng = new LatLng(globalCurrLatitude,globalCurrLongitude);
+                        String distance = getDistance(currentLocLatLng,latLng);
                         List<Address> addresses = null;
                         try {
                             addresses = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
@@ -171,8 +176,8 @@ public class MapFragment extends Fragment {
                             MarkerOptions markerOptions = new MarkerOptions();
                             markerOptions.position(latLng);
                             markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_destination_focus));
-                            markerOptions.title("Destination");
-                            markerOptions.snippet(address);
+                            markerOptions.title(address);
+                            markerOptions.snippet(distance+" away from your location");
                             googleMap.clear();
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                     latLng, 15
@@ -221,13 +226,16 @@ public class MapFragment extends Fragment {
                                 addressList = geocoder.getFromLocationName(destPoint,1);
                                 Address address = addressList.get(0);
                                 latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                                currentLocLatLng = new LatLng(globalCurrLatitude,globalCurrLongitude);
+
+                                String distance =getDistance(currentLocLatLng, latLng);
                                 String destinationName = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1).get(0).getAddressLine(0);
 
                                 MarkerOptions markerOptions = new MarkerOptions();
                                 markerOptions.position(latLng);
                                 markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_destination_focus));
-                                markerOptions.title("Destination");
-                                markerOptions.snippet(destinationName);
+                                markerOptions.title(destinationName);
+                                markerOptions.snippet(distance+" away from your location");
                                 googleMap.clear();
                                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                         latLng, 15
@@ -247,82 +255,6 @@ public class MapFragment extends Fragment {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void getCurrentLocation(){
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION) && ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Required Location Permission")
-                        .setMessage("Allow permission to access this feature")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_CODE);
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        })
-                        .create()
-                        .show();
-
-
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_CODE);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            // Permission has already been granted
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                // Logic to handle location object
-                                Double latitude = location.getLatitude();
-                                Double longitude = location.getLongitude();
-
-                                Geocoder geocoder = new Geocoder(getActivity());
-                                List<Address> addresses = null;
-                                try {
-                                    addresses = geocoder.getFromLocation(latitude,longitude,1);
-                                    String address = addresses.get(0).getAddressLine(0);
-                                    et_destination.setText(address);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-                            else{
-                                setLocationListener();
-                            }
-                        }
-                    });
-
-        }
     }
 
     public void autoCurrentLocationTrack(){
@@ -382,6 +314,8 @@ public class MapFragment extends Fragment {
                                         // Logic to handle location object
                                         Double latitude = location.getLatitude();
                                         Double longitude = location.getLongitude();
+                                        globalCurrLatitude = latitude;
+                                        globalCurrLongitude = longitude;
 
                                         Geocoder geocoder = new Geocoder(getActivity());
                                         List<Address> addresses = null;
@@ -392,8 +326,8 @@ public class MapFragment extends Fragment {
                                             MarkerOptions markerOptions = new MarkerOptions();
                                             markerOptions.position(latLng);
                                             markerOptions.icon(bitmapDescriptorFromVector(getContext(),R.drawable.ic_baseline_current_location));
-                                            markerOptions.title("Current Location");
-                                            markerOptions.snippet(address);
+                                            markerOptions.title(address);
+                                            markerOptions.snippet("Current Location");
                                             googleMap.clear();
                                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                                     latLng, 15
@@ -434,6 +368,7 @@ public class MapFragment extends Fragment {
 
          if (gps_enable == false) {
              new AlertDialog.Builder(getActivity())
+                     .setCancelable(false)
                      .setTitle("Location permission required")
                      .setMessage("Please turn on location")
                      .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -446,7 +381,7 @@ public class MapFragment extends Fragment {
                      .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                          @Override
                          public void onClick(DialogInterface dialogInterface, int i) {
-                             dialogInterface.dismiss();
+                            setLocationListener();
                          }
                      })
                      .create()
@@ -454,6 +389,25 @@ public class MapFragment extends Fragment {
          }else{
              autoCurrentLocationTrack();
          }
+    }
+
+    public String getDistance(LatLng currentLocLatLng, LatLng destinationLatLng) {
+        Location l1 = new Location("One");
+        l1.setLatitude(currentLocLatLng.latitude);
+        l1.setLongitude(currentLocLatLng.longitude);
+
+        Location l2 = new Location("Two");
+        l2.setLatitude(destinationLatLng.latitude);
+        l2.setLongitude(destinationLatLng.longitude);
+
+        float distance = l1.distanceTo(l2);
+        String dist = distance + " m";
+
+        if (distance > 1000.0f) {
+            distance = distance / 1000.0f;
+            dist = distance + " km";
+        }
+        return dist;
     }
 
     @Override
